@@ -1,15 +1,15 @@
 import './App.css'
-import Task from './components/Task'
-import { UserProvider } from './context/myContext'
+import Myform from './components/form'
+import InputCustom from './components/ui/custominput'
 
 function App() {
 
   return (
   <div>
-
-    <UserProvider value="Ramadanuv">
-    <Task/>
-    </UserProvider>
+<Myform />
+    
+   
+    
   </div>
    
   )

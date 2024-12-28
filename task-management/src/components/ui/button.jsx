@@ -1,5 +1,7 @@
 function ButtonCustom () {
-    return(<h1>this is button</h1>)
+    return(
+        <button>Add Task</button>
+    )
 }
 
 export default ButtonCustom;
