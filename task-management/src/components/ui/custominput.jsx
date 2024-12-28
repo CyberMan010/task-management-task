@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 
-function InputCustom({type="text", name, placeholder, required, minLength, onInputChange }) {
+function InputCustom({
+    name,
+    type = "text",
+    placeholder,
+    required,
+    minLength,
+    maxLength,
+    options,
+    onInputChange,
+}) {
     const [value, setValue] = useState("");
     const [error, setError] = useState("");
 
@@ -8,38 +17,65 @@ function InputCustom({type="text", name, placeholder, required, minLength, onInp
         const inputValue = e.target.value;
         setValue(inputValue);
 
-        // Validate input
+        // Validation
         if (required && inputValue.trim() === "") {
             setError(`${name} is required`);
-        } else if (minLength && inputValue.length < minLength) {
+        } else if (type === "text" && minLength && inputValue.length < minLength) {
             setError(`${name} must be at least ${minLength} characters`);
         }
-         // Validation for due date
-         else if (type === "date" && new Date(inputValue) < new Date()) {
+        else if (maxLength && inputValue.length > maxLength) {
+            setError(`${name} must be no more than ${maxLength} characters`);
+        }  
+        // Validation for due date
+        else if (type === "date" && new Date(inputValue) < new Date()) {
             setError(`${name} cannot be in the past`);
-        } else {
+        }
+        else if (type === "select" && required && !inputValue) {
+            setError(`${name} is required`);
+        }  else {
             setError("");
         }
 
-        // Pass the input value to the parent form
         onInputChange(inputValue);
     };
 
     return (
         <div>
-            <input
-                type={type}
+        {type === "select" ? (
+            <select
                 name={name}
-                placeholder={placeholder}
                 value={value}
                 onChange={handleChange}
                 style={{
                     border: error ? "1px solid red" : "1px solid #ccc",
                     padding: "0.5em",
                 }}
+            >
+                <option value="" disabled>
+                    Select {name}
+                </option>
+                {options.map((option) => (
+                    <option key={option} value={option}>
+                        {option}
+                    </option>
+                ))}
+            </select>
+        ) : (
+            <input
+                type={type}
+                name={name}
+                placeholder={placeholder}
+                value={value}
+                maxLength={maxLength}
+                onChange={handleChange}
+                style={{
+                    border: error ? "1px solid red" : "1px solid #ccc",
+                    padding: "0.5em",
+                }}
             />
-            {error && <p style={{ color: "red", fontSize: "0.8em" }}>{error}</p>}
-        </div>
+        )}
+        {error && <p style={{ color: "red", fontSize: "0.8em" }}>{error}</p>}
+    </div>
     );
 }
 
