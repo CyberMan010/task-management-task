@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import InputCustom from "./ui/custominput";
+import ButtonCustom from "./ui/button";
 
 function Myform() {
     const [taskName, setTaskName] = useState("");
@@ -7,31 +8,39 @@ function Myform() {
     const [priority, setPriority] = useState("");
     const [description, setDescription] = useState("");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        if (!taskName || taskName.length < 3) {
-            alert("Please provide a valid task name (at least 3 characters).");
-            return;
+    const validateTask = () => {
+        if (!taskName || taskName.trim().length < 3) {
+            alert("Task Name must be at least 3 characters long.");
+            return false;
         }
 
         if (!dueDate || new Date(dueDate) < new Date()) {
-            alert("Please provide a valid due date that is not in the past.");
-            return;
+            alert("Due Date must not be in the past.");
+            return false;
         }
 
         if (!priority) {
-            alert("Please select a priority.");
-            return;
+            alert("Priority is required.");
+            return false;
         }
 
-        alert(
-            `Task Submitted:\nTask Name: ${taskName}\nDue Date: ${dueDate}\nPriority: ${priority}\nDescription: ${description}`
-        );
+        return true;
+    };
+
+    const handleAddTask = () => {
+        if (!validateTask()) return;
+
+        // Return the validated task
+        return {
+            taskName: taskName.trim(),
+            dueDate,
+            priority,
+            description: description.trim(),
+        };
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => e.preventDefault()}>
             <h2>Create a New Task</h2>
             <InputCustom
                 name="Task Name"
@@ -47,7 +56,7 @@ function Myform() {
                 onInputChange={setDueDate}
             />
             <InputCustom
-                name="Priority"
+                name="Task Priority"
                 type="select"
                 required
                 options={["Low", "Medium", "High"]}
@@ -59,7 +68,7 @@ function Myform() {
                 maxLength={200}
                 onInputChange={setDescription}
             />
-            <button type="submit">Submit</button>
+            <ButtonCustom getTask={handleAddTask} />
         </form>
     );
 }
